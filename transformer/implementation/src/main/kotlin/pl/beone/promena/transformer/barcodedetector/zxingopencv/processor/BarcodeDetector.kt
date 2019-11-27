@@ -1,6 +1,5 @@
 package pl.beone.promena.transformer.barcodedetector.zxingopencv.processor
 
-import org.opencv.core.Core
 import org.opencv.core.Core.bitwise_or
 import org.opencv.core.Mat
 import org.opencv.highgui.HighGui
@@ -43,16 +42,18 @@ class BarcodeDetector(
             dilationsIterations
         )
 
-    fun detect(imageMatrix: Mat): List<DetectedBarcode> =
-        (detect(imageMatrix, contoursFinder) +
-                if (additionalVerticalTransformation) detect(imageMatrix, verticalContoursFinder) else emptyList())
-            .distinctBy { it.decodedBarcode }
+    fun detect(imageMatrix: Mat): List<DetectedBarcode> {
+        val copiedImageMatrix = createMatrix { imageMatrix.copyTo(it) }
+        return (detect(copiedImageMatrix, contoursFinder) +
+                if (additionalVerticalTransformation) detect(copiedImageMatrix, verticalContoursFinder) else emptyList())
+            .distinctBy(DetectedBarcode::decodedBarcode)
+    }
 
-    fun getImmediateMatrices(): ContourVerticesFinder.ImmediateMatrices {
+    fun getImmediateMatrices(): ContourVerticesFinder.ImmediateMatrices =
         if (additionalVerticalTransformation) {
             val contoursFinder = contoursFinder.getImmediateMatrices()
             val verticalContoursFinder = verticalContoursFinder.getImmediateMatrices()
-            return ContourVerticesFinder.ImmediateMatrices(
+            ContourVerticesFinder.ImmediateMatrices(
                 merge(contoursFinder.threshold, verticalContoursFinder.threshold),
                 merge(contoursFinder.closingKernel, verticalContoursFinder.closingKernel),
                 merge(contoursFinder.erosionsAndDilations, verticalContoursFinder.erosionsAndDilations),
@@ -60,18 +61,9 @@ class BarcodeDetector(
             )
         } else {
             with(contoursFinder.getImmediateMatrices()) {
-                return ContourVerticesFinder.ImmediateMatrices(
-                    threshold,
-                    closingKernel,
-                    erosionsAndDilations,
-                    contours
-                )
+                ContourVerticesFinder.ImmediateMatrices(threshold, closingKernel, erosionsAndDilations, contours)
             }
         }
-    }
-
-    private fun merge(matFirst: Mat, matSecond: Mat): Mat =
-        createMatrix { bitwise_or(matFirst, matSecond, it) }
 
     private fun detect(imageMatrix: Mat, contourVerticesFinder: ContourVerticesFinder): List<DetectedBarcode> =
         contourVerticesFinder.find(imageMatrix)
@@ -84,6 +76,9 @@ class BarcodeDetector(
         } catch (e: NoSuchElementException) {
             null
         }
+
+    private fun merge(matFirst: Mat, matSecond: Mat): Mat =
+        createMatrix { bitwise_or(matFirst, matSecond, it) }
 
     private fun Mat.toBufferedImage(): BufferedImage =
         HighGui.toBufferedImage(this) as BufferedImage

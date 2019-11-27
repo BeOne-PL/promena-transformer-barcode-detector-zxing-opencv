@@ -45,15 +45,15 @@ class ContourVerticesFinder(
             .let(::computeScharrGradientMagnitudeRepresentation)
             .let { (gradientX, gradientY) -> subtractYGradientFromXGradient(gradientX, gradientY) }
             .let(::applyThreshold)
-            .also { ifStoreImmediateMatricesIsTrue { threshold = it } }
+            .also { ifStoreImmediateMatricesIsTrue { threshold = createMatrixAndCopy(it) } }
             .let(::constructClosingKernel)
-            .also { ifStoreImmediateMatricesIsTrue { closingKernel = it } }
+            .also { ifStoreImmediateMatricesIsTrue { closingKernel = createMatrixAndCopy(it) } }
             .let(::applyErosionsAndDilations)
-            .also { ifStoreImmediateMatricesIsTrue { erosionsAndDilations = it } }
+            .also { ifStoreImmediateMatricesIsTrue { erosionsAndDilations = createMatrixAndCopy(it) } }
             .let(::findContours)
             .toMatOfPoint2f()
             .map(::computeBoundingBox)
-            .also { ifStoreImmediateMatricesIsTrue { contours = it } }
+            .also { ifStoreImmediateMatricesIsTrue { contours = createMatricesAndCopy(it) } }
             .map(::convexHull)
             .map(::convertToContourVertices)
 
@@ -138,4 +138,14 @@ class ContourVerticesFinder(
             toRun()
         }
     }
+
+    private fun createMatricesAndCopy(matrices: List<Mat>): List<Mat> =
+        matrices.map { matrix ->
+            createMatrixAndCopy(matrix)
+        }
+
+    private fun createMatrixAndCopy(matrix: Mat): Mat =
+        createMatrix {
+            matrix.copyTo(it)
+        }
 }
