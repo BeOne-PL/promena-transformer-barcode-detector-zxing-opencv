@@ -31,6 +31,9 @@ enum class ZxingOpenCvBarcodeDetectorBarcodeFormat(
     companion object {
         fun of(format: String): ZxingOpenCvBarcodeDetectorBarcodeFormat =
             values().firstOrNull { it.format == format }
-                ?: throw IllegalArgumentException("Format <$format> isn't supported. Available formats: ${values().map(ZxingOpenCvBarcodeDetectorBarcodeFormat::format)}")
+                ?: throw IllegalArgumentException("Format <$format> isn't supported. Available formats: ${getStringFormats()}")
+
+        fun getStringFormats(): List<String> =
+            values().map(ZxingOpenCvBarcodeDetectorBarcodeFormat::format)
     }
 }
