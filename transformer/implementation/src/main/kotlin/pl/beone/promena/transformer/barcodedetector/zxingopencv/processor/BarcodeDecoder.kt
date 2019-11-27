@@ -78,15 +78,12 @@ class BarcodeDecoder(
 
     private val barcodeDescriptors = allBarcodeDescriptors.filter { barcodeFormats.contains(it.barcodeFormat) }
 
-    fun decode(bufferedImage: BufferedImage, possibleAngleRadians: List<Double>): DecodedBarcode {
-        val flatMap = generateRotations(createSquareWithMarginAndWhiteBackgroundAndCenter(bufferedImage), possibleAngleRadians)
+    fun decode(bufferedImage: BufferedImage, possibleAngleRadians: List<Double>): DecodedBarcode =
+        generateRotations(createSquareWithMarginAndWhiteBackgroundAndCenter(bufferedImage), possibleAngleRadians)
             .flatMap(::generateRotations)
-        val flatten = flatMap
             .map(::convertToBinaryBitmap)
             .map(::decode).flatten()
-        return flatten
             .let(::selectTheBestMatch) ?: throw NoSuchElementException()
-    }
 
     private fun createSquareWithMarginAndWhiteBackgroundAndCenter(bufferedImage: BufferedImage): BufferedImage {
         val diagonalWithMargin =

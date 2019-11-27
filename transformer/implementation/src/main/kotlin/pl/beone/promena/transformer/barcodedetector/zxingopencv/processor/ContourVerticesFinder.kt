@@ -1,7 +1,10 @@
 package pl.beone.promena.transformer.barcodedetector.zxingopencv.processor
 
 import org.opencv.core.*
-import org.opencv.imgproc.Imgproc
+import org.opencv.core.Core.convertScaleAbs
+import org.opencv.core.Core.subtract
+import org.opencv.core.CvType.CV_32F
+import org.opencv.imgproc.Imgproc.*
 
 class ContourVerticesFinder(
     private val storeImmediateMatrices: Boolean,
@@ -67,56 +70,57 @@ class ContourVerticesFinder(
 
     private fun convertToGrayscaleIfItIsColoured(matrix: Mat): Mat =
         if (matrix.channels() == 3) {
-            createMatrix {
-                Imgproc.cvtColor(matrix, it, Imgproc.COLOR_BGR2GRAY)
-            }
+            cvtColor(matrix, matrix, COLOR_BGR2GRAY)
+                .let { matrix }
         } else {
             matrix
         }
 
     private fun computeScharrGradientMagnitudeRepresentation(matrix: Mat): Pair<Mat, Mat> =
-        createMatrix {
-            Imgproc.Sobel(matrix, it, CvType.CV_32F, 1, 0, -1)
-        } to createMatrix { Imgproc.Sobel(matrix, it, CvType.CV_32F, 0, 1, -1) }
+        (createMatrix { Sobel(matrix, it, CV_32F, 1, 0, -1) } to
+                createMatrix { Sobel(matrix, it, CV_32F, 0, 1, -1) })
 
     private fun subtractYGradientFromXGradient(gradientX: Mat, gradientY: Mat): Mat =
         createMatrix {
-            Core.subtract(gradientX, gradientY, it)
-            Core.convertScaleAbs(it, it)
+            subtract(gradientX, gradientY, it)
+            convertScaleAbs(it, it)
         }
+            .also { gradientX.release() }
+            .also { gradientY.release() }
 
     private fun applyThreshold(matrix: Mat): Mat =
-        createMatrix {
-            Imgproc.threshold(matrix, it, thresholdValue, thresholdMaxVal, Imgproc.THRESH_BINARY)
-        }
+        threshold(matrix, matrix, thresholdValue, thresholdMaxVal, THRESH_BINARY)
+            .let { matrix }
 
     private fun constructClosingKernel(matrix: Mat): Mat =
-        createMatrix {
-            val kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(kernelSizeWidth, kernelSizeHeight))
-            Imgproc.morphologyEx(matrix, it, Imgproc.MORPH_CLOSE, kernel)
-        }
+        getStructuringElement(MORPH_RECT, Size(kernelSizeWidth, kernelSizeHeight))
+            .also { kernel -> morphologyEx(matrix, matrix, MORPH_CLOSE, kernel) }
+            .let { matrix }
 
     private fun applyErosionsAndDilations(matrix: Mat): Mat =
-        createMatrix { matrix.copyTo(it) }
-            .also { Imgproc.erode(it, it, Mat(), Point(-1.0, -1.0), erosionsIterations) }
-            .also { Imgproc.dilate(it, it, Mat(), Point(-1.0, -1.0), dilationsIterations) }
+        matrix
+            .also { erode(matrix, matrix, Mat(), Point(-1.0, -1.0), erosionsIterations) }
+            .also { dilate(matrix, matrix, Mat(), Point(-1.0, -1.0), dilationsIterations) }
 
     private fun findContours(matrix: Mat): List<MatOfPoint> =
         mutableListOf<MatOfPoint>()
-            .also { Imgproc.findContours(matrix, it, Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE) }
+            .also { findContours(matrix, it, Mat(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE) }
+            .also { matrix.release() }
 
     private fun List<MatOfPoint>.toMatOfPoint2f(): List<MatOfPoint2f> =
         map { MatOfPoint2f(*it.toArray()) }
+            .also { forEach { it.release() } }
 
     private fun computeBoundingBox(matOfPoint2f: MatOfPoint2f): Mat =
         createMatrix {
-            val rotatedRect = Imgproc.minAreaRect(matOfPoint2f)
-            Imgproc.boxPoints(rotatedRect, it)
-        }
+            val rotatedRect = minAreaRect(matOfPoint2f)
+            boxPoints(rotatedRect, it)
+        }.also { matOfPoint2f.release() }
 
     private fun convexHull(matrix: Mat): MatOfPoint =
         matrix.toMatOfPoint()
-            .also { Imgproc.convexHull(it, MatOfInt()) }
+            .also { matrix.release() }
+            .also { convexHull(it, MatOfInt()) }
 
     private fun convertToContourVertices(matrix: Mat): FoundContour =
         FoundContour(

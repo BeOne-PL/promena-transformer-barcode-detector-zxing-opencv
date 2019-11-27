@@ -51,9 +51,11 @@ internal class Processor(
     private fun detectBarcodes(data: Data, parameters: Parameters, barcodeFilter: BarcodeFilter): Metadata =
         PDDocument.load(data.getInputStream()).use { document ->
             (0 until document.numberOfPages)
+                .asSequence()
                 .map { PageWithItem(it + 1, PdfPageToGrayscaleMatrixConverter.convert(document, it)) }
                 .map { (page, bufferedImage) -> detectBarcodes(bufferedImage, parameters).map { PageWithItem(page, it) } }
                 .flatten()
+                .toList()
                 .let(barcodeFilter::filter)
                 .sortedBy(PageWithItem<DetectedBarcode>::page)
                 .let(MetadataCreator::createMetadata)

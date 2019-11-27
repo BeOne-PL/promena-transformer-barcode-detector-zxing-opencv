@@ -1,6 +1,7 @@
 package pl.beone.promena.transformer.barcodedetector.zxingopencv.processor
 
 import org.opencv.core.Core
+import org.opencv.core.Core.bitwise_or
 import org.opencv.core.Mat
 import org.opencv.highgui.HighGui
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat
@@ -70,7 +71,7 @@ class BarcodeDetector(
     }
 
     private fun merge(matFirst: Mat, matSecond: Mat): Mat =
-        createMatrix { Core.bitwise_or(matFirst, matSecond, it) }
+        createMatrix { bitwise_or(matFirst, matSecond, it) }
 
     private fun detect(imageMatrix: Mat, contourVerticesFinder: ContourVerticesFinder): List<DetectedBarcode> =
         contourVerticesFinder.find(imageMatrix)

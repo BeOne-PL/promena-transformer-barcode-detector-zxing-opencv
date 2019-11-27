@@ -1,8 +1,14 @@
 package pl.beone.promena.transformer.barcodedetector.zxingopencv.processor
 
 import mu.KotlinLogging
-import org.opencv.core.*
+import org.opencv.core.Core.bitwise_not
+import org.opencv.core.CvType.CV_8U
+import org.opencv.core.Mat
+import org.opencv.core.MatOfPoint
+import org.opencv.core.Point
+import org.opencv.core.Scalar
 import org.opencv.imgproc.Imgproc
+import org.opencv.imgproc.Imgproc.fillConvexPoly
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.ContourVerticesFinder.FoundContour
 
 object ContourVerticesCutter {
@@ -23,20 +29,19 @@ object ContourVerticesCutter {
     }
 
     private fun createBoundingBoxMask(imageMatrix: Mat, matOfPoint: MatOfPoint): Mat =
-        Mat(imageMatrix.rows(), imageMatrix.cols(), CvType.CV_8U, Scalar(0.0))
-            .also { Imgproc.fillConvexPoly(it, matOfPoint, Scalar(255.0)) }
+        Mat(imageMatrix.rows(), imageMatrix.cols(), CV_8U, Scalar(0.0))
+            .also { fillConvexPoly(it, matOfPoint, Scalar(255.0)) }
 
     private fun createMatrixWithBoundingBox(imageMatrix: Mat, mask: Mat): Mat =
         createMatrix { imageMatrix.copyTo(it, mask) }
 
     private fun reverseMask(mask: Mat): Mat =
-        createMatrix { Core.bitwise_not(mask, it) }
+        createMatrix { bitwise_not(mask, it) }
+            .also { mask.release() }
 
     private fun applyWhiteBackground(matrix: Mat, mask: Mat): Mat =
-        createMatrix {
-            matrix.copyTo(it)
-            Core.bitwise_not(matrix, it, mask)
-        }
+        bitwise_not(matrix, matrix, mask)
+            .let { matrix }
 
     private fun FoundContour.toMatOfPoint(): MatOfPoint =
         with(this) {
