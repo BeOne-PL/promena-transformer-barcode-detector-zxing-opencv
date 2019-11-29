@@ -18,11 +18,10 @@
     <properties>
         <barcode-detector-zxing-opencv.version>1.0.0</barcode-detector-zxing-opencv.version>
 
-        <opencv.version>4.12</opencv.version>
+        <javacv-platform.version>1.5.2</javacv-platform.version>
         <zxing-core.version>3.4.0</zxing-core.version>
         <zxing-javase.version>3.4.0</zxing-javase.version>
         <pdfbox.version>2.0.16</pdfbox.version>
-        <opencv-bytedeco.version>4.1.2-1.5.2</opencv-bytedeco.version>
     </properties>
 
     <dependencies>
@@ -52,8 +51,8 @@
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
-            <artifactId>opencv</artifactId>
-            <version>${opencv-bytedeco.version}</version>
+            <artifactId>javacv-platform</artifactId>
+            <version>${javacv-platform.version}</version>
         </dependency>
 
         <dependency>
@@ -138,9 +137,6 @@
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>-Xms4g -Xmx4g -XX:NewSize=1g -XX:MaxNewSize=1g</argLine>
-                </configuration>
             </plugin>
         </plugins>
     </build>

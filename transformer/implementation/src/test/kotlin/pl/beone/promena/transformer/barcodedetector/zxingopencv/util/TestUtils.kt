@@ -29,8 +29,8 @@ internal val zxingOpenCvBarcodeDetectorTransformerBestDefaultParameters = ZxingO
     linearThresholdMaxVal = 255.0,
     linearKernelSizeWidth = 25.0,
     linearKernelSizeHeight = 1.0,
-    linearErosionsIterations = 25,
-    linearDilationsIterations = 25,
+    linearErosionsIterations = 20,
+    linearDilationsIterations = 20,
     matrixRotationThresholdDegrees = 1,
     matrixAdditionalVerticalTransformation = false,
     matrixThresholdValue = 100.0,
@@ -69,13 +69,6 @@ internal fun test(
     }
 }
 
-internal fun validateBarcode(barcodes: List<Barcode>, text: String, barcodeFormat: ZxingOpenCvBarcodeDetectorBarcodeFormat, page: Int) {
-    val barcode = barcodes.firstOrNull { it.getText() == text }
-        ?: throw failure("There is no <$text> barcode. Available barcodes: ${barcodes.map { "(" + it.getText() + ";" + it.getFormat() + ";" + it.getPage() + ")" }}")
-    barcode.getFormat() shouldBe barcodeFormat.format
-    barcode.getPage() shouldBe page
-}
-
 internal fun validateGeneralMetadata(metadata: Metadata) {
     with(ZxingOpenCvBarcodeDetectorMetadata(metadata).getBarcodes()) {
         this shouldHaveAtLeastSize 13
@@ -96,4 +89,11 @@ internal fun validateGeneralMetadata(metadata: Metadata) {
             validateBarcode(this, "Test MaxiCode", MAXI_CODE, 2)
         }
     }
+}
+
+internal fun validateBarcode(barcodes: List<Barcode>, text: String, barcodeFormat: ZxingOpenCvBarcodeDetectorBarcodeFormat, page: Int) {
+    val barcode = barcodes.firstOrNull { it.getText() == text }
+        ?: throw failure("There is no <$text> barcode. Available barcodes: ${barcodes.map { "(" + it.getText() + ";" + it.getFormat() + ";" + it.getPage() + ")" }}")
+    barcode.getFormat() shouldBe barcodeFormat.format
+    barcode.getPage() shouldBe page
 }

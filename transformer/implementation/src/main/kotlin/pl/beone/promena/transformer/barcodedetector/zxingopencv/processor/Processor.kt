@@ -2,11 +2,12 @@ package pl.beone.promena.transformer.barcodedetector.zxingopencv.processor
 
 import kotlinx.coroutines.asCoroutineDispatcher
 import org.apache.pdfbox.pdmodel.PDDocument
-import org.opencv.core.Mat
+import org.bytedeco.opencv.opencv_core.Mat
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.ZxingOpenCvBarcodeDetectorTransformerDefaultParameters
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.*
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat.Type
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.BarcodeDetector.DetectedBarcode
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.util.toGrayscaleIfItIsColoured
 import pl.beone.promena.transformer.contract.data.DataDescriptor
 import pl.beone.promena.transformer.contract.data.TransformedDataDescriptor
 import pl.beone.promena.transformer.contract.data.singleTransformedDataDescriptor
@@ -51,7 +52,7 @@ internal class Processor(
     private fun detectBarcodes(data: Data, parameters: Parameters, barcodeFilter: BarcodeFilter): Metadata =
         PDDocument.load(data.getInputStream()).use { document ->
             (0 until document.numberOfPages)
-                .map { PageWithItem(it + 1, PdfPageToGrayscaleMatrixConverter.convert(document, it)) }
+                .map { PageWithItem(it + 1, PdfPageToGrayscaleMatrixConverter.convert(document, it).toGrayscaleIfItIsColoured()) }
                 .map { (page, bufferedImage) -> detectBarcodes(bufferedImage, parameters).map { PageWithItem(page, it) } }
                 .flatten()
                 .let(barcodeFilter::filter)

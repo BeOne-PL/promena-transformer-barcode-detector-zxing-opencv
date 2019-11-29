@@ -1,10 +1,13 @@
 package pl.beone.promena.transformer.barcodedetector.zxingopencv.processor
 
-import org.opencv.core.*
-import org.opencv.core.Core.convertScaleAbs
-import org.opencv.core.Core.subtract
-import org.opencv.core.CvType.CV_32F
-import org.opencv.imgproc.Imgproc.*
+import org.bytedeco.javacpp.indexer.FloatRawIndexer
+import org.bytedeco.opencv.global.opencv_core.*
+import org.bytedeco.opencv.global.opencv_imgproc.*
+import org.bytedeco.opencv.opencv_core.Mat
+import org.bytedeco.opencv.opencv_core.MatVector
+import org.bytedeco.opencv.opencv_core.Point
+import org.bytedeco.opencv.opencv_core.Size
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.util.createMatrix
 
 class ContourVerticesFinder(
     private val storeImmediateMatrices: Boolean,
@@ -20,7 +23,7 @@ class ContourVerticesFinder(
         val threshold: Mat,
         val closingKernel: Mat,
         val erosionsAndDilations: Mat,
-        val contours: List<Mat>
+        val contours: MatVector
     )
 
     data class FoundContour(
@@ -38,22 +41,20 @@ class ContourVerticesFinder(
     private lateinit var threshold: Mat
     private lateinit var closingKernel: Mat
     private lateinit var erosionsAndDilations: Mat
-    private lateinit var contours: List<Mat>
+    private lateinit var contours: MatVector
 
     fun find(matrix: Mat): List<FoundContour> =
-        convertToGrayscaleIfItIsColoured(matrix)
-            .let(::computeScharrGradientMagnitudeRepresentation)
+        computeScharrGradientMagnitudeRepresentation(matrix)
             .let { (gradientX, gradientY) -> subtractYGradientFromXGradient(gradientX, gradientY) }
             .let(::applyThreshold)
-            .also { ifStoreImmediateMatricesIsTrue { threshold = createMatrixAndCopy(it) } }
+            .also { ifStoreImmediateMatricesIsTrue { threshold = it } }
             .let(::constructClosingKernel)
-            .also { ifStoreImmediateMatricesIsTrue { closingKernel = createMatrixAndCopy(it) } }
+            .also { ifStoreImmediateMatricesIsTrue { closingKernel = it } }
             .let(::applyErosionsAndDilations)
-            .also { ifStoreImmediateMatricesIsTrue { erosionsAndDilations = createMatrixAndCopy(it) } }
+            .also { ifStoreImmediateMatricesIsTrue { erosionsAndDilations = it } }
             .let(::findContours)
-            .toMatOfPoint2f()
-            .map(::computeBoundingBox)
-            .also { ifStoreImmediateMatricesIsTrue { contours = createMatricesAndCopy(it) } }
+            .also { ifStoreImmediateMatricesIsTrue { contours = it } }
+            .let(::computeBoundingBox)
             .map(::convexHull)
             .map(::convertToContourVertices)
 
@@ -68,84 +69,64 @@ class ContourVerticesFinder(
             }
         }
 
-    private fun convertToGrayscaleIfItIsColoured(matrix: Mat): Mat =
-        if (matrix.channels() == 3) {
-            cvtColor(matrix, matrix, COLOR_BGR2GRAY)
-                .let { matrix }
-        } else {
-            matrix
-        }
-
     private fun computeScharrGradientMagnitudeRepresentation(matrix: Mat): Pair<Mat, Mat> =
-        (createMatrix { Sobel(matrix, it, CV_32F, 1, 0, -1) } to
-                createMatrix { Sobel(matrix, it, CV_32F, 0, 1, -1) })
+        (createMatrix { Sobel(matrix, it, CV_32F, 1, 0) } to
+                createMatrix { Sobel(matrix, it, CV_32F, 0, 1) })
 
     private fun subtractYGradientFromXGradient(gradientX: Mat, gradientY: Mat): Mat =
         createMatrix {
             subtract(gradientX, gradientY, it)
             convertScaleAbs(it, it)
         }
-            .also { gradientX.release() }
-            .also { gradientY.release() }
 
     private fun applyThreshold(matrix: Mat): Mat =
-        threshold(matrix, matrix, thresholdValue, thresholdMaxVal, THRESH_BINARY)
-            .let { matrix }
+        createMatrix(matrix) {
+            threshold(matrix, it, thresholdValue, thresholdMaxVal, THRESH_BINARY)
+        }
 
     private fun constructClosingKernel(matrix: Mat): Mat =
-        getStructuringElement(MORPH_RECT, Size(kernelSizeWidth, kernelSizeHeight))
-            .also { kernel -> morphologyEx(matrix, matrix, MORPH_CLOSE, kernel) }
-            .let { matrix }
+        createMatrix(matrix) {
+            getStructuringElement(MORPH_RECT, Size(kernelSizeWidth.toInt(), kernelSizeHeight.toInt()))
+                .also { kernel -> morphologyEx(matrix, it, MORPH_CLOSE, kernel) }
+        }
 
     private fun applyErosionsAndDilations(matrix: Mat): Mat =
-        matrix
-            .also { erode(matrix, matrix, Mat(), Point(-1.0, -1.0), erosionsIterations) }
-            .also { dilate(matrix, matrix, Mat(), Point(-1.0, -1.0), dilationsIterations) }
+        createMatrix(matrix) { }
+            .also { erode(matrix, it, Mat(), Point(-1, -1), erosionsIterations, BORDER_CONSTANT, null) }
+            .also { dilate(it, it, Mat(), Point(-1, -1), dilationsIterations, BORDER_CONSTANT, null) }
 
-    private fun findContours(matrix: Mat): List<MatOfPoint> =
-        mutableListOf<MatOfPoint>()
-            .also { findContours(matrix, it, Mat(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE) }
-            .also { matrix.release() }
+    private fun findContours(matrix: Mat): MatVector =
+        MatVector()
+            .also { findContours(matrix, it, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE) }
 
-    private fun List<MatOfPoint>.toMatOfPoint2f(): List<MatOfPoint2f> =
-        map { MatOfPoint2f(*it.toArray()) }
-            .also { forEach { it.release() } }
+    // iterating using .map (High-order function) causes SEGMENTATION FAULT
+    private fun computeBoundingBox(matrixVector: MatVector): List<Mat> =
+        (0 until matrixVector.size()).map { index ->
+            createMatrix {
+                val rotatedRect = minAreaRect(matrixVector.get(index))
+                boxPoints(rotatedRect, it)
+            }
+        }
 
-    private fun computeBoundingBox(matOfPoint2f: MatOfPoint2f): Mat =
-        createMatrix {
-            val rotatedRect = minAreaRect(matOfPoint2f)
-            boxPoints(rotatedRect, it)
-        }.also { matOfPoint2f.release() }
+    private fun convexHull(matrix: Mat): Mat =
+        createMatrix(matrix) {
+            convexHull(matrix, it)
+        }
 
-    private fun convexHull(matrix: Mat): MatOfPoint =
-        matrix.toMatOfPoint()
-            .also { matrix.release() }
-            .also { convexHull(it, MatOfInt()) }
+    private fun convertToContourVertices(matrix: Mat): FoundContour {
+        val indexer = matrix.createIndexer<FloatRawIndexer>()
 
-    private fun convertToContourVertices(matrix: Mat): FoundContour =
-        FoundContour(
-            FoundContour.Vertex(matrix.get2DimensionalInt(0, 0, 0), matrix.get2DimensionalInt(0, 0, 1)),
-            FoundContour.Vertex(matrix.get2DimensionalInt(1, 0, 0), matrix.get2DimensionalInt(1, 0, 1)),
-            FoundContour.Vertex(matrix.get2DimensionalInt(2, 0, 0), matrix.get2DimensionalInt(2, 0, 1)),
-            FoundContour.Vertex(matrix.get2DimensionalInt(3, 0, 0), matrix.get2DimensionalInt(3, 0, 1))
-        )
-
-    private fun Mat.get2DimensionalInt(row: Int, column: Int, index: Int): Int =
-        get(row, column)[index].toInt()
+        return FoundContour(
+            FoundContour.Vertex(indexer.get(0, 0).toInt(), indexer.get(0, 1).toInt()),
+            FoundContour.Vertex(indexer.get(1, 0).toInt(), indexer.get(1, 1).toInt()),
+            FoundContour.Vertex(indexer.get(2, 0).toInt(), indexer.get(2, 1).toInt()),
+            FoundContour.Vertex(indexer.get(3, 0).toInt(), indexer.get(3, 1).toInt())
+        ).also { indexer.release() }
+    }
 
     private fun ifStoreImmediateMatricesIsTrue(toRun: () -> Unit) {
         if (storeImmediateMatrices) {
             toRun()
         }
     }
-
-    private fun createMatricesAndCopy(matrices: List<Mat>): List<Mat> =
-        matrices.map { matrix ->
-            createMatrixAndCopy(matrix)
-        }
-
-    private fun createMatrixAndCopy(matrix: Mat): Mat =
-        createMatrix {
-            matrix.copyTo(it)
-        }
 }

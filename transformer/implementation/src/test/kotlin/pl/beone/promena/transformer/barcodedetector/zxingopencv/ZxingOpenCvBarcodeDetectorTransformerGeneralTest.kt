@@ -47,7 +47,11 @@ class ZxingOpenCvBarcodeDetectorTransformerGeneralTest {
 
     @Test
     fun transform() {
-        test(GENERAL_TEST, zxingOpenCvBarcodeDetectorTransformer = zxingOpenCvBarcodeDetectorTransformer, validateMetadata = ::validateGeneralMetadata)
+        test(
+            GENERAL_TEST,
+            zxingOpenCvBarcodeDetectorTransformer = zxingOpenCvBarcodeDetectorTransformer,
+            validateMetadata = ::validateGeneralMetadata
+        )
     }
 
     @Test

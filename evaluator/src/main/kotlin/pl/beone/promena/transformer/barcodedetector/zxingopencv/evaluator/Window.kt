@@ -1,20 +1,20 @@
 package pl.beone.promena.transformer.barcodedetector.zxingopencv.evaluator
 
-import org.opencv.core.Mat
-import org.opencv.core.MatOfPoint
-import org.opencv.core.Point
-import org.opencv.core.Scalar
-import org.opencv.highgui.HighGui
-import org.opencv.imgcodecs.Imgcodecs
-import org.opencv.imgproc.Imgproc
+import org.bytedeco.javacv.Java2DFrameUtils.toBufferedImage
+import org.bytedeco.opencv.global.opencv_imgcodecs.imread
+import org.bytedeco.opencv.global.opencv_imgproc.LINE_8
+import org.bytedeco.opencv.global.opencv_imgproc.drawContours
+import org.bytedeco.opencv.opencv_core.Mat
+import org.bytedeco.opencv.opencv_core.MatVector
+import org.bytedeco.opencv.opencv_core.Scalar
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat.*
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.BarcodeDecoder.DecodedBarcode
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.BarcodeDetector
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.ContourVerticesFinder.FoundContour
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.ContourVerticesFinder.FoundContour.Vertex
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.ContourVerticesFinder.ImmediateMatrices
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.createMatrix
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.toMatOfPoint
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.util.createMatrix
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.util.toGrayscaleIfItIsColoured
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.util.toPoint
 import java.awt.Image
 import java.awt.image.BufferedImage
 import java.nio.file.Files
@@ -51,8 +51,8 @@ class Window : JFrame("") {
             thresholdMaxVal = 255.0,
             kernelSizeWidth = 25.0,
             kernelSizeHeight = 1.0,
-            erosionsIterations = 25,
-            dilationsIterations = 25
+            erosionsIterations = 20,
+            dilationsIterations = 20
         )
     private val linearBarcodeFormats = listOf(CODABAR, UPC_A, EAN_13, CODE_39, CODE_128, ITF)
 
@@ -218,7 +218,7 @@ class Window : JFrame("") {
 
         val path = imagePaths[imagePathsIndex % imagePaths.size].toString()
         try {
-            val imageMatrix = Imgcodecs.imread(path)
+            val imageMatrix = imread(path)
 
             val barcodeDetector = BarcodeDetector(
                 barcodeFormats = currentBarcodeFormats,
@@ -234,7 +234,7 @@ class Window : JFrame("") {
             )
 
             barcodeDetector
-                .detect(imageMatrix)
+                .detect(imageMatrix.toGrayscaleIfItIsColoured())
                 .also { showImmediateMatrices(imageMatrix, barcodeDetector.getImmediateMatrices()) }
                 .also { drawBarcodeContoursOnMatrix(imageMatrix, it.map(BarcodeDetector.DetectedBarcode::foundContour)) }
                 .also { showBarcodesOnList(it.map(BarcodeDetector.DetectedBarcode::decodedBarcode)) }
@@ -254,13 +254,13 @@ class Window : JFrame("") {
             .also { showImage(content.thresholdImageLabel, it.threshold) }
             .also { showImage(content.closingKernelImageLabel, it.closingKernel) }
             .also { showImage(content.erosionsAndDilationsLabel, it.erosionsAndDilations) }
-            .also { showImage(content.contoursImageLabel, drawContoursOnMatrix(imageMatrix, it.contours.map(Mat::toMatOfPoint))) }
+            .also { showImage(content.contoursImageLabel, drawContoursOnMatrix(imageMatrix, it.contours)) }
     }
 
     private fun showImage(imageLabel: JLabel, image: Mat) {
         imageLabel.text = ""
 
-        val bufferedImage = HighGui.toBufferedImage(image) as BufferedImage
+        val bufferedImage = toBufferedImage(image) as BufferedImage
         val scale = min((imageLabel.parent.width - 20).toDouble() / bufferedImage.width, (imageLabel.parent.height - 20).toDouble() / bufferedImage.height)
 
         bufferedImage
@@ -284,15 +284,14 @@ class Window : JFrame("") {
         imageLabel.icon = null
     }
 
-    private fun drawContoursOnMatrix(imageMatrix: Mat, matOfPoints: List<MatOfPoint>): Mat =
-        createMatrix {
-            imageMatrix.copyTo(it)
-            Imgproc.drawContours(it, matOfPoints, -1, Scalar(0.0, 0.0, 255.0), 10)
-        }
-
     private fun drawBarcodeContoursOnMatrix(imageMatrix: Mat, contourVertices: List<FoundContour>) {
-        showImage(content.resultImageLabel, drawContoursOnMatrix(imageMatrix, contourVertices.map(::convertToMatOfPoint)))
+        showImage(content.resultImageLabel, drawContoursOnMatrix(imageMatrix, contourVertices.toMatVector()))
     }
+
+    private fun drawContoursOnMatrix(imageMatrix: Mat, matrixVector: MatVector): Mat =
+        createMatrix(imageMatrix, true) {
+            drawContours(it, matrixVector, -1, Scalar.RED, 10, LINE_8, null, Int.MAX_VALUE, null)
+        }
 
     private fun showBarcodesOnList(decodedBarcode: List<DecodedBarcode>) {
         content.barcodeList.model = DefaultListModel<String>().also { model -> model.addAll(decodedBarcode.map(DecodedBarcode::toString)) }
@@ -323,11 +322,6 @@ class Window : JFrame("") {
     private fun JSpinner.intValue(): Int =
         value.toString().toInt()
 
-    private fun convertToMatOfPoint(contour: FoundContour): MatOfPoint =
-        with(contour) {
-            MatOfPoint(vertex.toPoint(), vertex2.toPoint(), vertex3.toPoint(), vertex4.toPoint())
-        }
-
-    private fun Vertex.toPoint(): Point =
-        Point(x.toDouble(), y.toDouble())
+    private fun List<FoundContour>.toMatVector(): MatVector =
+        MatVector(*map { Mat(it.toPoint().position(0)) }.toTypedArray())
 }

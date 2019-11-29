@@ -18,9 +18,9 @@ import com.google.zxing.oned.rss.expanded.RSSExpandedReader
 import com.google.zxing.pdf417.PDF417Reader
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat.*
-import java.awt.Color
-import java.awt.geom.AffineTransform
-import java.awt.image.AffineTransformOp
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.util.applyWhiteBackground
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.util.drawCentred
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.util.rotate
 import java.awt.image.BufferedImage
 import kotlin.math.sqrt
 
@@ -94,31 +94,13 @@ class BarcodeDecoder(
             .also { bufferedImage.drawCentred(it) }
     }
 
-    private fun BufferedImage.applyWhiteBackground() {
-        graphics.color = Color.WHITE
-        graphics.fillRect(0, 0, width, height)
-
-        graphics.dispose()
-    }
-
-    private fun BufferedImage.drawCentred(destination: BufferedImage) {
-        AffineTransform()
-            .also { it.translate((destination.width.toDouble() - width) / 2, (destination.height.toDouble() - height) / 2) }
-            .also { destination.createGraphics().drawImage(this, it, null) }
-    }
-
     private fun generateRotations(bufferedImage: BufferedImage, angleRadians: List<Double>): List<BufferedImage> =
-        angleRadians.map { bufferedImage.rotate(it) }
+        angleRadians.map(bufferedImage::rotate)
 
     private fun generateRotations(bufferedImage: BufferedImage): List<BufferedImage> =
         (-rotationThresholdDegrees..rotationThresholdDegrees)
             .map { it * Math.toRadians(1.0) }
-            .map { angleRadians -> bufferedImage.rotate(angleRadians) }
-
-    private fun BufferedImage.rotate(angleRadians: Double): BufferedImage =
-        AffineTransform()
-            .also { it.rotate(angleRadians, (width / 2).toDouble(), (height / 2).toDouble()) }
-            .let { AffineTransformOp(it, AffineTransformOp.TYPE_BILINEAR).filter(this, null) }
+            .map(bufferedImage::rotate)
 
     private fun convertToBinaryBitmap(bufferedImage: BufferedImage): BinaryBitmap =
         BinaryBitmap(HybridBinarizer(BufferedImageLuminanceSource(bufferedImage)))
