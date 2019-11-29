@@ -3,7 +3,7 @@ package pl.beone.promena.transformer.barcodedetector.zxingopencv
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import pl.beone.lib.junit.jupiter.external.DockerExtension
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat.*
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat.*
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.model.Resource.Document.General.GENERAL_TEST
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.model.Resource.Document.General.GENERAL_TEST_120_DEGREES
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.model.Resource.Document.General.GENERAL_TEST_150_DEGREES
@@ -28,18 +28,18 @@ class ZxingOpenCvBarcodeDetectorTransformerGeneralTest {
         private val zxingOpenCvBarcodeDetectorTransformer = createZxingOpenCvBarcodeDetectorTransformer(
             zxingOpenCvBarcodeDetectorTransformerBestDefaultParameters.copy(
                 formats = listOf(
-                    CODABAR.format,
-                    UPC_A.format,
-                    EAN_8.format,
-                    EAN_13.format,
-                    CODE_39.format,
-                    CODE_128.format,
-                    ITF.format,
-                    QR_CODE.format,
-                    PDF417.format,
-                    AZTEC_CODE.format,
-                    DATA_MATRIX.format,
-                    MAXI_CODE.format
+                    CODABAR.value,
+                    UPC_A.value,
+                    EAN_8.value,
+                    EAN_13.value,
+                    CODE_39.value,
+                    CODE_128.value,
+                    ITF.value,
+                    QR_CODE.value,
+                    PDF417.value,
+                    AZTEC_CODE.value,
+                    DATA_MATRIX.value,
+                    MAXI_CODE.value
                 )
             )
         )

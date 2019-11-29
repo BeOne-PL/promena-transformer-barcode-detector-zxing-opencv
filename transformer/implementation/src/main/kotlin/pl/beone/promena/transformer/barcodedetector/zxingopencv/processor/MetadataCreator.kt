@@ -30,7 +30,7 @@ internal object MetadataCreator {
         with(detectedBarcode) {
             emptyMetadata() +
                     (TEXT to decodedBarcode.text) +
-                    (FORMAT to decodedBarcode.barcodeFormat.format) +
+                    (FORMAT to decodedBarcode.format.value) +
                     (PAGE to page) +
                     (CONTOUR_ON_PAGE to createContour(foundContour))
         }

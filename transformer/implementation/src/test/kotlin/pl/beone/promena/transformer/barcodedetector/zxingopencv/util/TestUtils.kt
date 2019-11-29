@@ -8,8 +8,8 @@ import io.kotlintest.shouldBe
 import pl.beone.promena.transformer.applicationmodel.mediatype.MediaTypeConstants
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.ZxingOpenCvBarcodeDetectorTransformer
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.ZxingOpenCvBarcodeDetectorTransformerDefaultParameters
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat.*
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat.*
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorMetadata
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorMetadata.Barcode
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.zxingOpenCvBarcodeDetectorParameters
@@ -21,7 +21,7 @@ import pl.beone.promena.transformer.internal.model.metadata.emptyMetadata
 
 internal val zxingOpenCvBarcodeDetectorTransformerBestDefaultParameters = ZxingOpenCvBarcodeDetectorTransformerDefaultParameters(
     formats = listOf(
-        CODABAR.format, CODE_39.format, CODE_128.format, ITF.format, QR_CODE.format, PDF417.format, AZTEC_CODE.format, DATA_MATRIX.format, MAXI_CODE.format
+        CODABAR.value, CODE_39.value, CODE_128.value, ITF.value, QR_CODE.value, PDF417.value, AZTEC_CODE.value, DATA_MATRIX.value, MAXI_CODE.value
     ),
     linearRotationThresholdDegrees = 1,
     linearAdditionalVerticalTransformation = true,
@@ -91,9 +91,9 @@ internal fun validateGeneralMetadata(metadata: Metadata) {
     }
 }
 
-internal fun validateBarcode(barcodes: List<Barcode>, text: String, barcodeFormat: ZxingOpenCvBarcodeDetectorBarcodeFormat, page: Int) {
+internal fun validateBarcode(barcodes: List<Barcode>, text: String, format: ZxingOpenCvBarcodeDetectorFormat, page: Int) {
     val barcode = barcodes.firstOrNull { it.getText() == text }
         ?: throw failure("There is no <$text> barcode. Available barcodes: ${barcodes.map { "(" + it.getText() + ";" + it.getFormat() + ";" + it.getPage() + ")" }}")
-    barcode.getFormat() shouldBe barcodeFormat.format
+    barcode.getFormat() shouldBe format.value
     barcode.getPage() shouldBe page
 }

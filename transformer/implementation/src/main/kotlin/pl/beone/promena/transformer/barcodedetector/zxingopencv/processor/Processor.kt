@@ -5,7 +5,7 @@ import org.apache.pdfbox.pdmodel.PDDocument
 import org.bytedeco.opencv.opencv_core.Mat
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.ZxingOpenCvBarcodeDetectorTransformerDefaultParameters
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.*
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat.Type
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat.Type
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.BarcodeDetector.DetectedBarcode
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.util.toGrayscaleIfItIsColoured
 import pl.beone.promena.transformer.contract.data.DataDescriptor
@@ -28,8 +28,8 @@ internal class Processor(
     )
 
     companion object {
-        private val linearBarcodeFormats = ZxingOpenCvBarcodeDetectorBarcodeFormat.values().filter { it.type == Type.LINEAR }
-        private val matrixBarcodeFormats = ZxingOpenCvBarcodeDetectorBarcodeFormat.values().filter { it.type == Type.MATRIX }
+        private val linearFormats = ZxingOpenCvBarcodeDetectorFormat.values().filter { it.type == Type.LINEAR }
+        private val matrixFormats = ZxingOpenCvBarcodeDetectorFormat.values().filter { it.type == Type.MATRIX }
     }
 
     private val executionDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
@@ -65,7 +65,7 @@ internal class Processor(
 
     private fun createLinearBarcodeDetector(parameters: Parameters): BarcodeDetector =
         BarcodeDetector(
-            getAvailableFormats(parameters, linearBarcodeFormats),
+            getAvailableFormats(parameters, linearFormats),
             parameters.getLinearRotationThresholdDegreesOrDefault(defaultParameters.linearRotationThresholdDegrees),
             parameters.getLinearAdditionalVerticalTransformationOrDefault(defaultParameters.linearAdditionalVerticalTransformation),
             false,
@@ -79,7 +79,7 @@ internal class Processor(
 
     private fun createMatrixBarcodeDetector(parameters: Parameters): BarcodeDetector =
         BarcodeDetector(
-            getAvailableFormats(parameters, matrixBarcodeFormats),
+            getAvailableFormats(parameters, matrixFormats),
             parameters.getMatrixRotationThresholdDegreesOrDefault(defaultParameters.matrixRotationThresholdDegrees),
             parameters.getMatrixAdditionalVerticalTransformationOrDefault(defaultParameters.matrixAdditionalVerticalTransformation),
             false,
@@ -91,14 +91,11 @@ internal class Processor(
             parameters.getMatrixDilationsIterationsOrDefault(defaultParameters.matrixDilationsIterations)
         )
 
-    private fun getAvailableFormats(
-        parameters: Parameters,
-        formats: List<ZxingOpenCvBarcodeDetectorBarcodeFormat>
-    ): List<ZxingOpenCvBarcodeDetectorBarcodeFormat> =
+    private fun getAvailableFormats(parameters: Parameters, formats: List<ZxingOpenCvBarcodeDetectorFormat>): List<ZxingOpenCvBarcodeDetectorFormat> =
         try {
             (parameters.getFormatsOrNull() ?: defaultParameters.formats ?: throw NoSuchElementException())
-                .intersect(formats.map(ZxingOpenCvBarcodeDetectorBarcodeFormat::format))
-                .map(ZxingOpenCvBarcodeDetectorBarcodeFormat.Companion::of)
+                .intersect(formats.map(ZxingOpenCvBarcodeDetectorFormat::value))
+                .map(ZxingOpenCvBarcodeDetectorFormat.Companion::of)
         } catch (e: NoSuchElementException) {
             formats
         }

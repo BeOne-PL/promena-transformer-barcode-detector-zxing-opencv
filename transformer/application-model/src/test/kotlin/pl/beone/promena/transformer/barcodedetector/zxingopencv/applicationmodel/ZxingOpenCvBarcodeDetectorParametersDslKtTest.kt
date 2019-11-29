@@ -3,12 +3,12 @@ package pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmode
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldThrow
 import org.junit.jupiter.api.Test
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat.QR_CODE
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat.QR_CODE
 
 class ZxingOpenCvBarcodeDetectorParametersDslKtTest {
 
     companion object {
-        private val formats: List<String> = listOf(QR_CODE.format)
+        private val formats: List<String> = listOf(QR_CODE.value)
         private const val regexFilter: String = ".*"
         private const val linearRotationThresholdDegrees: Int = 10
         private const val linearAdditionalVerticalTransformation: Boolean = false

@@ -4,7 +4,7 @@ import io.kotlintest.shouldNotThrow
 import io.kotlintest.shouldThrow
 import org.junit.jupiter.api.Test
 import pl.beone.promena.transformer.applicationmodel.exception.transformer.TransformationNotSupportedException
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat.QR_CODE
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat.QR_CODE
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorSupport.ParametersSupport.isSupported
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.zxingOpenCvBarcodeDetectorParameters
 
@@ -22,7 +22,7 @@ class ZxingOpenCvBarcodeDetectorParametersSupportTest {
         shouldNotThrow<TransformationNotSupportedException> {
             isSupported(
                 zxingOpenCvBarcodeDetectorParameters(
-                    formats = listOf(QR_CODE.format),
+                    formats = listOf(QR_CODE.value),
                     regexFilter = ".*",
                     linearRotationThresholdDegrees = 10,
                     linearAdditionalVerticalTransformation = false,
@@ -48,7 +48,7 @@ class ZxingOpenCvBarcodeDetectorParametersSupportTest {
     @Test
     fun `isSupported _ formats`() {
         shouldThrow<TransformationNotSupportedException> {
-            isSupported(zxingOpenCvBarcodeDetectorParameters(formats = listOf(QR_CODE.format, "absent")))
+            isSupported(zxingOpenCvBarcodeDetectorParameters(formats = listOf(QR_CODE.value, "absent")))
         }
     }
 

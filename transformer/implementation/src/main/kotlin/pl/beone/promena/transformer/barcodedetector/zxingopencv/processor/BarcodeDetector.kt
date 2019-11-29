@@ -3,7 +3,7 @@ package pl.beone.promena.transformer.barcodedetector.zxingopencv.processor
 import org.bytedeco.opencv.global.opencv_core.bitwise_or
 import org.bytedeco.opencv.opencv_core.Mat
 import org.bytedeco.opencv.opencv_core.MatVector
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.BarcodeDecoder.DecodedBarcode
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.ContourVerticesFinder.FoundContour
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.util.createMatrix
@@ -11,7 +11,7 @@ import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.util.t
 import java.awt.image.BufferedImage
 
 class BarcodeDetector(
-    barcodeFormats: List<ZxingOpenCvBarcodeDetectorBarcodeFormat>,
+    formats: List<ZxingOpenCvBarcodeDetectorFormat>,
     rotationThresholdDegrees: Int,
     private val additionalVerticalTransformation: Boolean,
     private val storeImmediateMatrices: Boolean,
@@ -28,7 +28,7 @@ class BarcodeDetector(
         val foundContour: FoundContour
     )
 
-    private val decoder = BarcodeDecoder(barcodeFormats, rotationThresholdDegrees)
+    private val decoder = BarcodeDecoder(formats, rotationThresholdDegrees)
 
     private val contoursFinder = createContoursFinder(kernelSizeWidth, kernelSizeHeight)
     private val verticalContoursFinder = createContoursFinder(kernelSizeHeight, kernelSizeWidth)

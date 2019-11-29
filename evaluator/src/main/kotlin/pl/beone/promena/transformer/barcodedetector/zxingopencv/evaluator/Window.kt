@@ -7,7 +7,7 @@ import org.bytedeco.opencv.global.opencv_imgproc.drawContours
 import org.bytedeco.opencv.opencv_core.Mat
 import org.bytedeco.opencv.opencv_core.MatVector
 import org.bytedeco.opencv.opencv_core.Scalar
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat.*
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat.*
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.BarcodeDecoder.DecodedBarcode
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.BarcodeDetector
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.ContourVerticesFinder.FoundContour
@@ -54,7 +54,7 @@ class Window : JFrame("") {
             erosionsIterations = 20,
             dilationsIterations = 20
         )
-    private val linearBarcodeFormats = listOf(CODABAR, UPC_A, EAN_13, CODE_39, CODE_128, ITF)
+    private val linearFormats = listOf(CODABAR, UPC_A, EAN_13, CODE_39, CODE_128, ITF)
 
     private val matrixBarcodeDetectorState =
         BarcodeDetectorState(
@@ -67,10 +67,10 @@ class Window : JFrame("") {
             erosionsIterations = 20,
             dilationsIterations = 20
         )
-    private val matrixBarcodeFormats = listOf(QR_CODE, PDF417, AZTEC_CODE, DATA_MATRIX, MAXI_CODE)
+    private val matrixFormats = listOf(QR_CODE, PDF417, AZTEC_CODE, DATA_MATRIX, MAXI_CODE)
 
     private var currentBarcodeDetectorState = linearBarcodeDetectorState
-    private var currentBarcodeFormats = linearBarcodeFormats
+    private var currentFormats = linearFormats
 
     init {
         setMaximizedAndNotResizable()
@@ -183,12 +183,12 @@ class Window : JFrame("") {
     private fun addRadioButtonActions() {
         content.linearRadioButton.addActionListener {
             currentBarcodeDetectorState = linearBarcodeDetectorState
-            currentBarcodeFormats = linearBarcodeFormats
+            currentFormats = linearFormats
             setCurrentStateInBarcodeDetectorComponents()
         }
         content.matrixRadioButton.addActionListener {
             currentBarcodeDetectorState = matrixBarcodeDetectorState
-            currentBarcodeFormats = matrixBarcodeFormats
+            currentFormats = matrixFormats
             setCurrentStateInBarcodeDetectorComponents()
         }
     }
@@ -221,7 +221,7 @@ class Window : JFrame("") {
             val imageMatrix = imread(path)
 
             val barcodeDetector = BarcodeDetector(
-                barcodeFormats = currentBarcodeFormats,
+                formats = currentFormats,
                 rotationThresholdDegrees = content.rotationThresholdDegreesSpinner.intValue(),
                 additionalVerticalTransformation = content.additionalVerticalTransformationCheckBox.isSelected,
                 storeImmediateMatrices = true,

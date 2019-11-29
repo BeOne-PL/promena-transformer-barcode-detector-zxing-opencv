@@ -6,8 +6,8 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.mock.env.MockEnvironment
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.ZxingOpenCvBarcodeDetectorTransformerDefaultParameters
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat.EAN_13
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat.MAXI_CODE
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat.EAN_13
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat.MAXI_CODE
 import java.time.Duration
 
 class ZxingOpenCvBarcodeDetectorTransformerConfigurationContextTest {
@@ -97,7 +97,7 @@ class ZxingOpenCvBarcodeDetectorTransformerConfigurationContextTest {
 
         val applicationContext = createConfigApplicationContext(environment, ZxingOpenCvBarcodeDetectorTransformerConfigurationContext::class.java)
         applicationContext.getBean(ZxingOpenCvBarcodeDetectorTransformerDefaultParameters::class.java).let {
-            it.formats shouldBe listOf(MAXI_CODE.format, EAN_13.format)
+            it.formats shouldBe listOf(MAXI_CODE.value, EAN_13.value)
             it.regexFilter shouldBe ".*"
 
             it.linearRotationThresholdDegrees shouldBe 5

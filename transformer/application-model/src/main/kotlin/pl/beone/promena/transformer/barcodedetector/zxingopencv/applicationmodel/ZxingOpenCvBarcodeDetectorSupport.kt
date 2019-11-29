@@ -49,10 +49,10 @@ object ZxingOpenCvBarcodeDetectorSupport {
     object ParametersSupport {
         @JvmStatic
         fun isSupported(parameters: Parameters) {
-            val barcodeFormats = ZxingOpenCvBarcodeDetectorBarcodeFormat.values().map(ZxingOpenCvBarcodeDetectorBarcodeFormat::format)
-            parameters.validate(Formats.NAME, Formats.CLASS, false, "(${barcodeFormats.joinToString(", ")})")
-            { formats -> formats.all { barcodeFormats.contains(it) } }
-
+            with(ZxingOpenCvBarcodeDetectorFormat.values().map(ZxingOpenCvBarcodeDetectorFormat::value)) {
+                parameters.validate(Formats.NAME, Formats.CLASS, false, "(${joinToString(", ")})")
+                { it.all(::contains) }
+            }
             parameters.validate(RegexFilter.NAME, RegexFilter.CLASS, false)
 
             parameters.validate(LinearRotationThresholdDegrees.NAME, LinearRotationThresholdDegrees.CLASS, false, "<1, 360>")

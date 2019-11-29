@@ -3,7 +3,7 @@ package pl.beone.promena.transformer.barcodedetector.zxingopencv.processor
 import io.kotlintest.matchers.collections.shouldHaveSize
 import io.kotlintest.shouldBe
 import org.junit.jupiter.api.Test
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat.ITF
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat.ITF
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorMetadata
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.BarcodeDecoder.DecodedBarcode
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.BarcodeDetector.DetectedBarcode
@@ -16,7 +16,7 @@ class MetadataCreatorTest {
     @Test
     fun createMetadata() {
         val text = "30712345000010"
-        val barcodeFormat = ITF
+        val format = ITF
         val page = 1
         val vertexX = 1
         val vertexY = 2
@@ -32,7 +32,7 @@ class MetadataCreatorTest {
                 PageWithItem(
                     page,
                     DetectedBarcode(
-                        DecodedBarcode(text, barcodeFormat),
+                        DecodedBarcode(text, format),
                         FoundContour(
                             Vertex(vertexX, vertexY),
                             Vertex(vertex2X, vertex2Y),
@@ -48,7 +48,7 @@ class MetadataCreatorTest {
             this shouldHaveSize 1
             with(get(0)) {
                 getText() shouldBe text
-                getFormat() shouldBe barcodeFormat.format
+                getFormat() shouldBe format.value
                 getPage() shouldBe 1
 
                 with(getContourOnPage()) {

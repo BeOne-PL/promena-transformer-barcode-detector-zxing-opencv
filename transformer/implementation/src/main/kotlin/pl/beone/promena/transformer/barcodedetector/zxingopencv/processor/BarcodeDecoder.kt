@@ -16,8 +16,8 @@ import com.google.zxing.oned.*
 import com.google.zxing.oned.rss.RSS14Reader
 import com.google.zxing.oned.rss.expanded.RSSExpandedReader
 import com.google.zxing.pdf417.PDF417Reader
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat.*
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat.*
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.util.applyWhiteBackground
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.util.drawCentred
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.util.rotate
@@ -25,17 +25,17 @@ import java.awt.image.BufferedImage
 import kotlin.math.sqrt
 
 class BarcodeDecoder(
-    barcodeFormats: List<ZxingOpenCvBarcodeDetectorBarcodeFormat>,
+    formats: List<ZxingOpenCvBarcodeDetectorFormat>,
     private val rotationThresholdDegrees: Int
 ) {
 
     data class DecodedBarcode(
         val text: String,
-        val barcodeFormat: ZxingOpenCvBarcodeDetectorBarcodeFormat
+        val format: ZxingOpenCvBarcodeDetectorFormat
     )
 
     private data class BarcodeDescriptor(
-        val barcodeFormat: ZxingOpenCvBarcodeDetectorBarcodeFormat,
+        val format: ZxingOpenCvBarcodeDetectorFormat,
         val multipleBarcodeReader: MultipleBarcodeReader,
         val hints: Map<DecodeHintType, Any>
     )
@@ -76,7 +76,7 @@ class BarcodeDecoder(
             GenericMultipleBarcodeReader(this)
     }
 
-    private val barcodeDescriptors = allBarcodeDescriptors.filter { barcodeFormats.contains(it.barcodeFormat) }
+    private val barcodeDescriptors = allBarcodeDescriptors.filter { formats.contains(it.format) }
 
     fun decode(bufferedImage: BufferedImage, possibleAngleRadians: List<Double>): DecodedBarcode =
         generateRotations(createSquareWithMarginAndWhiteBackgroundAndCenter(bufferedImage), possibleAngleRadians)
@@ -109,7 +109,7 @@ class BarcodeDecoder(
         barcodeDescriptors.mapNotNull { barcodeDescriptor ->
             try {
                 barcodeDescriptor.multipleBarcodeReader.decodeMultiple(binaryBitmap, barcodeDescriptor.hints)
-                    .map { DecodedBarcode(it.text, barcodeDescriptor.barcodeFormat) }
+                    .map { DecodedBarcode(it.text, barcodeDescriptor.format) }
                     .map { BarcodeDescriptorWithDecodedBarcode(it, barcodeDescriptor) }
             } catch (e: NotFoundException) {
                 null
@@ -122,7 +122,7 @@ class BarcodeDecoder(
         }
 
         return barcodeDescriptorWithDecodedBarcodeList.asSequence()
-            .groupBy { (decodedBarcode, barcodeDescriptor) -> decodedBarcode.text + barcodeDescriptor.barcodeFormat }
+            .groupBy { (decodedBarcode, barcodeDescriptor) -> decodedBarcode.text + barcodeDescriptor.format }
             .maxBy { (_, barcodeDescriptorWithDecodedBarcodeList) -> barcodeDescriptorWithDecodedBarcodeList.size }!!
             .value.first().decodedBarcode
     }

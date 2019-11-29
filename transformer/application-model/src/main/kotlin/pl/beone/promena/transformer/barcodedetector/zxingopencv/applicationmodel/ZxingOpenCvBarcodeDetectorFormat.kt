@@ -1,10 +1,10 @@
 package pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel
 
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat.Type.LINEAR
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorBarcodeFormat.Type.MATRIX
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat.Type.LINEAR
+import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat.Type.MATRIX
 
-enum class ZxingOpenCvBarcodeDetectorBarcodeFormat(
-    val format: String,
+enum class ZxingOpenCvBarcodeDetectorFormat(
+    val value: String,
     val type: Type
 ) {
     CODABAR("Codabar", LINEAR),
@@ -29,11 +29,11 @@ enum class ZxingOpenCvBarcodeDetectorBarcodeFormat(
     }
 
     companion object {
-        fun of(format: String): ZxingOpenCvBarcodeDetectorBarcodeFormat =
-            values().firstOrNull { it.format == format }
+        fun of(format: String): ZxingOpenCvBarcodeDetectorFormat =
+            values().firstOrNull { it.value == format }
                 ?: throw IllegalArgumentException("Format <$format> isn't supported. Available formats: ${getStringFormats()}")
 
         fun getStringFormats(): List<String> =
-            values().map(ZxingOpenCvBarcodeDetectorBarcodeFormat::format)
+            values().map(ZxingOpenCvBarcodeDetectorFormat::value)
     }
 }
