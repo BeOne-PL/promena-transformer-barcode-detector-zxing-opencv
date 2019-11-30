@@ -53,30 +53,30 @@ class BarcodeDecoder(
             DecodeHintType.PURE_BARCODE to false
         )
 
-        private val allBarcodeDescriptors = listOf(
-            BarcodeDescriptor(CODABAR, CodaBarReader().toGenericMultipleBarcodeReader(), hints),
-            BarcodeDescriptor(UPC_A, UPCAReader().toGenericMultipleBarcodeReader(), hints),
-            BarcodeDescriptor(UPC_E, UPCEReader().toGenericMultipleBarcodeReader(), hints),
-            BarcodeDescriptor(EAN_8, EAN8Reader().toGenericMultipleBarcodeReader(), hints),
-            BarcodeDescriptor(EAN_13, EAN13Reader().toGenericMultipleBarcodeReader(), hints),
-            BarcodeDescriptor(CODE_39, Code39Reader().toGenericMultipleBarcodeReader(), hints),
-            BarcodeDescriptor(CODE_128, Code128Reader().toGenericMultipleBarcodeReader(), hints),
-            BarcodeDescriptor(ITF, ITFReader().toGenericMultipleBarcodeReader(), hints),
-            BarcodeDescriptor(RSS_14, RSS14Reader().toGenericMultipleBarcodeReader(), hints),
-            BarcodeDescriptor(RSS_EXPANDED, RSSExpandedReader().toGenericMultipleBarcodeReader(), hints),
+        private val allBarcodeDescriptors = mapOf(
+            CODABAR to { BarcodeDescriptor(CODABAR, CodaBarReader().toGenericMultipleBarcodeReader(), hints) },
+            UPC_A to { BarcodeDescriptor(UPC_A, UPCAReader().toGenericMultipleBarcodeReader(), hints) },
+            UPC_E to { BarcodeDescriptor(UPC_E, UPCEReader().toGenericMultipleBarcodeReader(), hints) },
+            EAN_8 to { BarcodeDescriptor(EAN_8, EAN8Reader().toGenericMultipleBarcodeReader(), hints) },
+            EAN_13 to { BarcodeDescriptor(EAN_13, EAN13Reader().toGenericMultipleBarcodeReader(), hints) },
+            CODE_39 to { BarcodeDescriptor(CODE_39, Code39Reader().toGenericMultipleBarcodeReader(), hints) },
+            CODE_128 to { BarcodeDescriptor(CODE_128, Code128Reader().toGenericMultipleBarcodeReader(), hints) },
+            ITF to { BarcodeDescriptor(ITF, ITFReader().toGenericMultipleBarcodeReader(), hints) },
+            RSS_14 to { BarcodeDescriptor(RSS_14, RSS14Reader().toGenericMultipleBarcodeReader(), hints) },
+            RSS_EXPANDED to { BarcodeDescriptor(RSS_EXPANDED, RSSExpandedReader().toGenericMultipleBarcodeReader(), hints) },
 
-            BarcodeDescriptor(QR_CODE, QRCodeMultiReader(), hints),
-            BarcodeDescriptor(PDF417, PDF417Reader().toGenericMultipleBarcodeReader(), hints),
-            BarcodeDescriptor(AZTEC_CODE, AztecReader().toGenericMultipleBarcodeReader(), hints),
-            BarcodeDescriptor(DATA_MATRIX, DataMatrixReader().toGenericMultipleBarcodeReader(), emptyMap()),
-            BarcodeDescriptor(MAXI_CODE, MaxiCodeReader().toGenericMultipleBarcodeReader(), hints)
+            QR_CODE to { BarcodeDescriptor(QR_CODE, QRCodeMultiReader(), hints) },
+            PDF417 to { BarcodeDescriptor(PDF417, PDF417Reader().toGenericMultipleBarcodeReader(), hints) },
+            AZTEC_CODE to { BarcodeDescriptor(AZTEC_CODE, AztecReader().toGenericMultipleBarcodeReader(), hints) },
+            DATA_MATRIX to { BarcodeDescriptor(DATA_MATRIX, DataMatrixReader().toGenericMultipleBarcodeReader(), emptyMap()) },
+            MAXI_CODE to { BarcodeDescriptor(MAXI_CODE, MaxiCodeReader().toGenericMultipleBarcodeReader(), hints) }
         )
 
         private fun Reader.toGenericMultipleBarcodeReader(): GenericMultipleBarcodeReader =
             GenericMultipleBarcodeReader(this)
     }
 
-    private val barcodeDescriptors = allBarcodeDescriptors.filter { formats.contains(it.format) }
+    private val barcodeDescriptors = formats.mapNotNull(allBarcodeDescriptors::get).map { it() }
 
     fun decode(bufferedImage: BufferedImage, possibleAngleRadians: List<Double>): DecodedBarcode =
         generateRotations(createSquareWithMarginAndWhiteBackgroundAndCenter(bufferedImage), possibleAngleRadians)
