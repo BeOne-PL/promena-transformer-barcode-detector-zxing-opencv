@@ -4,8 +4,8 @@ import io.kotlintest.matchers.collections.shouldHaveAtLeastSize
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import pl.beone.lib.junit.jupiter.external.DockerExtension
+import pl.beone.promena.transformer.barcodedetector.metadata.BarcodeDetectorMetadata
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat.*
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorMetadata
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.zxingOpenCvBarcodeDetectorParameters
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.model.Resource.Document.General.GENERAL_TEST
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.util.createZxingOpenCvBarcodeDetectorTransformer
@@ -19,7 +19,7 @@ class ZxingOpenCvBarcodeDetectorTransformerParametersTest {
     @Test
     fun transform_formats() {
         test(GENERAL_TEST, zxingOpenCvBarcodeDetectorParameters(formats = listOf(QR_CODE.value, CODE_128.value))) {
-            with(ZxingOpenCvBarcodeDetectorMetadata(it).getBarcodes()) {
+            with(BarcodeDetectorMetadata(it).getBarcodes()) {
                 this shouldHaveAtLeastSize 2
                 validateBarcode(this, "01234567890abcdefg", CODE_128, 1)
                 validateBarcode(this, "TEST123456", QR_CODE, 2)
@@ -31,7 +31,7 @@ class ZxingOpenCvBarcodeDetectorTransformerParametersTest {
     @Test
     fun transform_regexFilter() {
         test(GENERAL_TEST, zxingOpenCvBarcodeDetectorParameters(regexFilter = "[a-zA-Z ]+")) {
-            with(ZxingOpenCvBarcodeDetectorMetadata(it).getBarcodes()) {
+            with(BarcodeDetectorMetadata(it).getBarcodes()) {
                 this shouldHaveAtLeastSize 4
                 validateBarcode(this, "ABCDEF", PDF417, 2)
                 validateBarcode(this, "Test Aztec", AZTEC_CODE, 2)

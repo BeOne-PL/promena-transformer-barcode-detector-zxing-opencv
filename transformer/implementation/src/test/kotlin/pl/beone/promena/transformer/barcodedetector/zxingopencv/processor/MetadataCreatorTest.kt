@@ -3,8 +3,8 @@ package pl.beone.promena.transformer.barcodedetector.zxingopencv.processor
 import io.kotlintest.matchers.collections.shouldHaveSize
 import io.kotlintest.shouldBe
 import org.junit.jupiter.api.Test
+import pl.beone.promena.transformer.barcodedetector.metadata.BarcodeDetectorMetadata
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat.ITF
-import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorMetadata
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.BarcodeDecoder.DecodedBarcode
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.BarcodeDetector.DetectedBarcode
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.ContourVerticesFinder.FoundContour
@@ -44,27 +44,27 @@ class MetadataCreatorTest {
             )
         )
 
-        with(ZxingOpenCvBarcodeDetectorMetadata(metadata).getBarcodes()) {
+        with(BarcodeDetectorMetadata(metadata).getBarcodes()) {
             this shouldHaveSize 1
             with(get(0)) {
                 getText() shouldBe text
                 getFormat() shouldBe format.value
                 getPage() shouldBe 1
 
-                with(getContourOnPage()) {
-                    with(getVertex()) {
+                with(getContourVerticesOnPage()) {
+                    with(get(0)) {
                         getX() shouldBe vertexX
                         getY() shouldBe vertexY
                     }
-                    with(getVertex2()) {
+                    with(get(1)) {
                         getX() shouldBe vertex2X
                         getY() shouldBe vertex2Y
                     }
-                    with(getVertex3()) {
+                    with(get(2)) {
                         getX() shouldBe vertex3X
                         getY() shouldBe vertex3Y
                     }
-                    with(getVertex4()) {
+                    with(get(3)) {
                         getX() shouldBe vertex4X
                         getY() shouldBe vertex4Y
                     }

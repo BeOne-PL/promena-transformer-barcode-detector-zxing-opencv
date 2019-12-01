@@ -8,6 +8,8 @@
     <artifactId>barcode-detector-zxing-opencv-evaluator</artifactId>
     <version>1.0.0</version>
 
+    <name>[TRANSFORMER] Barcode detector - ZXing &amp; OpenCV - evaluator</name>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 

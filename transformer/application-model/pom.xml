@@ -15,6 +15,10 @@
     <artifactId>barcode-detector-zxing-opencv-application-model</artifactId>
     <version>1.0.0</version>
 
+    <properties>
+        <barcode-detector-metadata.version>1.0.0</barcode-detector-metadata.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -28,6 +32,11 @@
         <dependency>
             <groupId>pl.beone.promena.base</groupId>
             <artifactId>promena-transformer-internal</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>pl.beone.promena.transformer</groupId>
+            <artifactId>barcode-detector-metadata</artifactId>
+            <version>${barcode-detector-metadata.version}</version>
         </dependency>
 
         <dependency>
