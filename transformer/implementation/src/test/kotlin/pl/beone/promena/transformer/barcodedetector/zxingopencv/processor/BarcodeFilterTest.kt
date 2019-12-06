@@ -27,7 +27,7 @@ class BarcodeFilterTest {
     fun filter() {
         with(BarcodeFilter("[a-zA-Z]+").filter(listOfPageWithDetectedBarcode)) {
             this shouldHaveSize 1
-            get(0) shouldBe listOfPageWithDetectedBarcode[2]
+            this[0] shouldBe listOfPageWithDetectedBarcode[2]
         }
     }
 
@@ -35,9 +35,9 @@ class BarcodeFilterTest {
     fun `filter _ null regexString _ should return input list without barcode with empty text`() {
         with(BarcodeFilter(null).filter(listOfPageWithDetectedBarcode)) {
             this shouldHaveSize 3
-            get(0) shouldBe listOfPageWithDetectedBarcode[0]
-            get(1) shouldBe listOfPageWithDetectedBarcode[1]
-            get(2) shouldBe listOfPageWithDetectedBarcode[2]
+            this[0] shouldBe listOfPageWithDetectedBarcode[0]
+            this[1] shouldBe listOfPageWithDetectedBarcode[1]
+            this[2] shouldBe listOfPageWithDetectedBarcode[2]
         }
     }
 }

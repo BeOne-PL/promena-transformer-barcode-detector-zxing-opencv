@@ -5,14 +5,14 @@ import org.junit.jupiter.api.Test
 import pl.beone.promena.transformer.applicationmodel.mediatype.MediaTypeConstants.APPLICATION_PDF
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorConstants.TRANSFORMER_ID
 
-class ZxingOpenCvBarcodeDetectorDslKtTest {
+class ZxingOpenCvBarcodeDetectorDslTest {
 
     @Test
     fun zxingOpenCvBarcodeDetectorTransformation() {
-        zxingOpenCvBarcodeDetectorTransformation(zxingOpenCvBarcodeDetectorParameters()).let {
-            it.transformerId shouldBe TRANSFORMER_ID
-            it.targetMediaType shouldBe APPLICATION_PDF
-            it.parameters.getAll().size shouldBe 0
+        with(zxingOpenCvBarcodeDetectorTransformation(zxingOpenCvBarcodeDetectorParameters())) {
+            transformerId shouldBe TRANSFORMER_ID
+            targetMediaType shouldBe APPLICATION_PDF
+            parameters.getAll().size shouldBe 0
         }
     }
 }

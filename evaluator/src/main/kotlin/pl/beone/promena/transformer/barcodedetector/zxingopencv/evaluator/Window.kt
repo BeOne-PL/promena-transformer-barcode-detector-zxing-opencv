@@ -130,7 +130,7 @@ class Window : JFrame("") {
 
     private fun showErrorDialogAndThrowException(message: String): IllegalStateException {
         showMessageDialog(this, message, "Error", ERROR_MESSAGE)
-        return IllegalStateException(message)
+        error(message)
     }
 
     private fun addApplyAction() {

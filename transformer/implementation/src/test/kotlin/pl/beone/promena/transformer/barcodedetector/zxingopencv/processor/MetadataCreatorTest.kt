@@ -46,25 +46,25 @@ class MetadataCreatorTest {
 
         with(BarcodeDetectorMetadata(metadata).getBarcodes()) {
             this shouldHaveSize 1
-            with(get(0)) {
+            with(this[0]) {
                 getText() shouldBe text
                 getFormat() shouldBe format.value
                 getPage() shouldBe 1
 
                 with(getContourVerticesOnPage()) {
-                    with(get(0)) {
+                    with(this[0]) {
                         getX() shouldBe vertexX
                         getY() shouldBe vertexY
                     }
-                    with(get(1)) {
+                    with(this[1]) {
                         getX() shouldBe vertex2X
                         getY() shouldBe vertex2Y
                     }
-                    with(get(2)) {
+                    with(this[2]) {
                         getX() shouldBe vertex3X
                         getY() shouldBe vertex3Y
                     }
-                    with(get(3)) {
+                    with(this[3]) {
                         getX() shouldBe vertex4X
                         getY() shouldBe vertex4Y
                     }

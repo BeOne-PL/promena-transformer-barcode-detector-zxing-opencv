@@ -1,7 +1,7 @@
 package pl.beone.promena.transformer.barcodedetector.zxingopencv.configuration
 
 import io.kotlintest.shouldBe
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.mock.env.MockEnvironment
@@ -13,7 +13,7 @@ import java.time.Duration
 class ZxingOpenCvBarcodeDetectorTransformerConfigurationContextTest {
 
     @Test
-    fun `setting context _ default parameters`() {
+    fun `setting context _ default`() {
         val environment = createEnvironment(
             mapOf(
                 "transformer.pl.beone.promena.transformer.barcodedetector.zxingopencv.default.parameters.formats" to "",
@@ -41,34 +41,34 @@ class ZxingOpenCvBarcodeDetectorTransformerConfigurationContextTest {
         )
 
         val applicationContext = createConfigApplicationContext(environment, ZxingOpenCvBarcodeDetectorTransformerConfigurationContext::class.java)
-        applicationContext.getBean(ZxingOpenCvBarcodeDetectorTransformerDefaultParameters::class.java).let {
-            it.formats shouldBe null
-            it.regexFilter shouldBe null
+        with(applicationContext.getBean(ZxingOpenCvBarcodeDetectorTransformerDefaultParameters::class.java)) {
+            formats shouldBe null
+            regexFilter shouldBe null
 
-            it.linearRotationThresholdDegrees shouldBe 5
-            it.linearAdditionalVerticalTransformation shouldBe true
-            it.linearThresholdValue shouldBe 150.0
-            it.linearThresholdMaxVal shouldBe 255.0
-            it.linearKernelSizeWidth shouldBe 15.0
-            it.linearKernelSizeHeight shouldBe 1.0
-            it.linearErosionsIterations shouldBe 25
-            it.linearDilationsIterations shouldBe 30
+            linearRotationThresholdDegrees shouldBe 5
+            linearAdditionalVerticalTransformation shouldBe true
+            linearThresholdValue shouldBe 150.0
+            linearThresholdMaxVal shouldBe 255.0
+            linearKernelSizeWidth shouldBe 15.0
+            linearKernelSizeHeight shouldBe 1.0
+            linearErosionsIterations shouldBe 25
+            linearDilationsIterations shouldBe 30
 
-            it.matrixRotationThresholdDegrees shouldBe 3
-            it.matrixAdditionalVerticalTransformation shouldBe false
-            it.matrixThresholdValue shouldBe 100.0
-            it.matrixThresholdMaxVal shouldBe 200.0
-            it.matrixKernelSizeWidth shouldBe 20.0
-            it.matrixKernelSizeHeight shouldBe 25.0
-            it.matrixErosionsIterations shouldBe 10
-            it.matrixDilationsIterations shouldBe 15
+            matrixRotationThresholdDegrees shouldBe 3
+            matrixAdditionalVerticalTransformation shouldBe false
+            matrixThresholdValue shouldBe 100.0
+            matrixThresholdMaxVal shouldBe 200.0
+            matrixKernelSizeWidth shouldBe 20.0
+            matrixKernelSizeHeight shouldBe 25.0
+            matrixErosionsIterations shouldBe 10
+            matrixDilationsIterations shouldBe 15
 
-            it.timeout shouldBe null
+            timeout shouldBe null
         }
     }
 
     @Test
-    fun `setting context _ all values`() {
+    fun `setting context _ all`() {
         val environment = createEnvironment(
             mapOf(
                 "transformer.pl.beone.promena.transformer.barcodedetector.zxingopencv.default.parameters.formats" to "MaxiCode,EAN-13",
@@ -96,29 +96,29 @@ class ZxingOpenCvBarcodeDetectorTransformerConfigurationContextTest {
         )
 
         val applicationContext = createConfigApplicationContext(environment, ZxingOpenCvBarcodeDetectorTransformerConfigurationContext::class.java)
-        applicationContext.getBean(ZxingOpenCvBarcodeDetectorTransformerDefaultParameters::class.java).let {
-            it.formats shouldBe listOf(MAXI_CODE.value, EAN_13.value)
-            it.regexFilter shouldBe ".*"
+        with(applicationContext.getBean(ZxingOpenCvBarcodeDetectorTransformerDefaultParameters::class.java)) {
+            formats shouldBe listOf(MAXI_CODE.value, EAN_13.value)
+            regexFilter shouldBe ".*"
 
-            it.linearRotationThresholdDegrees shouldBe 5
-            it.linearAdditionalVerticalTransformation shouldBe true
-            it.linearThresholdValue shouldBe 150.0
-            it.linearThresholdMaxVal shouldBe 255.0
-            it.linearKernelSizeWidth shouldBe 15.0
-            it.linearKernelSizeHeight shouldBe 1.0
-            it.linearErosionsIterations shouldBe 25
-            it.linearDilationsIterations shouldBe 30
+            linearRotationThresholdDegrees shouldBe 5
+            linearAdditionalVerticalTransformation shouldBe true
+            linearThresholdValue shouldBe 150.0
+            linearThresholdMaxVal shouldBe 255.0
+            linearKernelSizeWidth shouldBe 15.0
+            linearKernelSizeHeight shouldBe 1.0
+            linearErosionsIterations shouldBe 25
+            linearDilationsIterations shouldBe 30
 
-            it.matrixRotationThresholdDegrees shouldBe 3
-            it.matrixAdditionalVerticalTransformation shouldBe false
-            it.matrixThresholdValue shouldBe 100.0
-            it.matrixThresholdMaxVal shouldBe 200.0
-            it.matrixKernelSizeWidth shouldBe 20.0
-            it.matrixKernelSizeHeight shouldBe 25.0
-            it.matrixErosionsIterations shouldBe 10
-            it.matrixDilationsIterations shouldBe 15
+            matrixRotationThresholdDegrees shouldBe 3
+            matrixAdditionalVerticalTransformation shouldBe false
+            matrixThresholdValue shouldBe 100.0
+            matrixThresholdMaxVal shouldBe 200.0
+            matrixKernelSizeWidth shouldBe 20.0
+            matrixKernelSizeHeight shouldBe 25.0
+            matrixErosionsIterations shouldBe 10
+            matrixDilationsIterations shouldBe 15
 
-            it.timeout shouldBe Duration.ofMinutes(5)
+            timeout shouldBe Duration.ofMinutes(5)
         }
     }
 
