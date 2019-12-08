@@ -123,7 +123,7 @@ class Window : JFrame("") {
             Files.isRegularFile(path) -> listOf(path)
 
             else -> {
-                throw showErrorDialogAndThrowException("Chosen path isn't a file or a folder")
+                throw showErrorDialogAndThrowException("Chosen path isn't file or folder")
             }
         }
     }
@@ -241,7 +241,7 @@ class Window : JFrame("") {
 
             title = path
         } catch (e: Throwable) {
-            showMessageDialog(this, "An error occurred during detecting barcodes in <$path> file. Check logs for more details", "Error", ERROR_MESSAGE)
+            showMessageDialog(this, "Error occurred during detecting barcodes in <$path> file. Check logs for more details", "Error", ERROR_MESSAGE)
             resetAllImageLabelsAndBarcodes()
             title = ""
 

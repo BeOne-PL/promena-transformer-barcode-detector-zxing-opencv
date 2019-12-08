@@ -21,7 +21,7 @@ object ContourVerticesCutter {
         return try {
             Mat(createNewAndCopyWithMask(imageMatrix, boundingBoxMask), boundingRect(Mat(point)))
         } catch (e: Exception) {
-            logger.debug { "An error occurred during cutting out bounding box using contour vertices. It's highly likely that bonding box covers the whole image. Returning input image..." }
+            logger.debug { "Error occurred during cutting out bounding box using contour vertices. It's highly likely that bonding box covers whole image. Returning input image..." }
             imageMatrix
         }
     }
