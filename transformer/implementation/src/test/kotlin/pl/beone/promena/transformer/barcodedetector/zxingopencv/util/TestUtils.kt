@@ -6,8 +6,8 @@ import io.kotlintest.matchers.collections.shouldHaveSize
 import io.kotlintest.matchers.withClue
 import io.kotlintest.shouldBe
 import pl.beone.promena.transformer.applicationmodel.mediatype.MediaTypeConstants
-import pl.beone.promena.transformer.barcodedetector.metadata.BarcodeDetectorMetadata
-import pl.beone.promena.transformer.barcodedetector.metadata.BarcodeDetectorMetadata.Barcode
+import pl.beone.promena.transformer.barcodedetector.metadata.BarcodeDetectorMetadataGetter
+import pl.beone.promena.transformer.barcodedetector.metadata.BarcodeDetectorMetadataGetter.Barcode
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.ZxingOpenCvBarcodeDetectorTransformer
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.ZxingOpenCvBarcodeDetectorTransformerDefaultParameters
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat
@@ -70,7 +70,7 @@ internal fun test(
 }
 
 internal fun validateGeneralMetadata(metadata: Metadata) {
-    with(BarcodeDetectorMetadata(metadata).getBarcodes()) {
+    with(BarcodeDetectorMetadataGetter(metadata).getBarcodes()) {
         this shouldHaveAtLeastSize 13
         with(this) {
             validateBarcode(this, "0123456789", CODABAR, 1)

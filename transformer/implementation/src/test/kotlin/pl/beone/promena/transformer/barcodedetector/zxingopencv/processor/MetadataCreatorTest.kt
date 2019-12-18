@@ -3,7 +3,7 @@ package pl.beone.promena.transformer.barcodedetector.zxingopencv.processor
 import io.kotlintest.matchers.collections.shouldHaveSize
 import io.kotlintest.shouldBe
 import org.junit.jupiter.api.Test
-import pl.beone.promena.transformer.barcodedetector.metadata.BarcodeDetectorMetadata
+import pl.beone.promena.transformer.barcodedetector.metadata.BarcodeDetectorMetadataGetter
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.applicationmodel.ZxingOpenCvBarcodeDetectorFormat.ITF
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.BarcodeDecoder.DecodedBarcode
 import pl.beone.promena.transformer.barcodedetector.zxingopencv.processor.BarcodeDetector.DetectedBarcode
@@ -44,7 +44,7 @@ class MetadataCreatorTest {
             )
         )
 
-        with(BarcodeDetectorMetadata(metadata).getBarcodes()) {
+        with(BarcodeDetectorMetadataGetter(metadata).getBarcodes()) {
             this shouldHaveSize 1
             with(this[0]) {
                 getText() shouldBe text
