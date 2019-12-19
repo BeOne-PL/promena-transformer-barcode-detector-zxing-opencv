@@ -73,27 +73,27 @@ internal fun validateGeneralMetadata(metadata: Metadata) {
     with(BarcodeDetectorMetadataGetter(metadata).getBarcodes()) {
         this shouldHaveAtLeastSize 13
         with(this) {
-            validateBarcode(this, "0123456789", CODABAR, 1)
-            validateBarcode(this, "000012345670", UPC_A, 1)
-            validateBarcode(this, "01234565", EAN_8, 1)
-            validateBarcode(this, "8412345678905", EAN_13, 1)
-            validateBarcode(this, "0123456789A", CODE_39, 1)
-            validateBarcode(this, "C39+E+X", CODE_39, 1)
-            validateBarcode(this, "01234567890abcdefg", CODE_128, 1)
-            validateBarcode(this, "30712345000010", ITF, 1)
+            validateBarcode("0123456789", CODABAR, 1)
+            validateBarcode("000012345670", UPC_A, 1)
+            validateBarcode("01234565", EAN_8, 1)
+            validateBarcode("8412345678905", EAN_13, 1)
+            validateBarcode("0123456789A", CODE_39, 1)
+            validateBarcode("C39+E+X", CODE_39, 1)
+            validateBarcode("01234567890abcdefg", CODE_128, 1)
+            validateBarcode("30712345000010", ITF, 1)
 
-            validateBarcode(this, "TEST123456", QR_CODE, 2)
-            validateBarcode(this, "ABCDEF", PDF417, 2)
-            validateBarcode(this, "Test Aztec", AZTEC_CODE, 2)
-            validateBarcode(this, "Test Data Matrix", DATA_MATRIX, 2)
-            validateBarcode(this, "Test MaxiCode", MAXI_CODE, 2)
+            validateBarcode("TEST123456", QR_CODE, 2)
+            validateBarcode("ABCDEF", PDF417, 2)
+            validateBarcode("Test Aztec", AZTEC_CODE, 2)
+            validateBarcode("Test Data Matrix", DATA_MATRIX, 2)
+            validateBarcode("Test MaxiCode", MAXI_CODE, 2)
         }
     }
 }
 
-internal fun validateBarcode(barcodes: List<Barcode>, text: String, format: ZxingOpenCvBarcodeDetectorFormat, page: Int) {
-    val barcode = barcodes.firstOrNull { it.getText() == text }
-        ?: throw failure("There is no <$text> barcode. Available barcodes: ${barcodes.map { "(" + it.getText() + ";" + it.getFormat() + ";" + it.getPage() + ")" }}")
+internal fun List<Barcode>.validateBarcode(text: String, format: ZxingOpenCvBarcodeDetectorFormat, page: Int) {
+    val barcode = firstOrNull { it.getText() == text }
+        ?: throw failure("There is no <$text> barcode. Available barcodes: ${map { "(" + it.getText() + ";" + it.getFormat() + ";" + it.getPage() + ")" }}")
     barcode.getFormat() shouldBe format.value
     barcode.getPage() shouldBe page
 }

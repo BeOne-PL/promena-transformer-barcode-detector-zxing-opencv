@@ -21,8 +21,8 @@ class ZxingOpenCvBarcodeDetectorTransformerParametersTest {
         test(GENERAL_TEST, zxingOpenCvBarcodeDetectorParameters(formats = listOf(QR_CODE.value, CODE_128.value))) {
             with(BarcodeDetectorMetadataGetter(it).getBarcodes()) {
                 this shouldHaveAtLeastSize 2
-                validateBarcode(this, "01234567890abcdefg", CODE_128, 1)
-                validateBarcode(this, "TEST123456", QR_CODE, 2)
+                validateBarcode("01234567890abcdefg", CODE_128, 1)
+                validateBarcode("TEST123456", QR_CODE, 2)
             }
 
         }
@@ -33,10 +33,10 @@ class ZxingOpenCvBarcodeDetectorTransformerParametersTest {
         test(GENERAL_TEST, zxingOpenCvBarcodeDetectorParameters(regexFilter = "[a-zA-Z ]+")) {
             with(BarcodeDetectorMetadataGetter(it).getBarcodes()) {
                 this shouldHaveAtLeastSize 4
-                validateBarcode(this, "ABCDEF", PDF417, 2)
-                validateBarcode(this, "Test Aztec", AZTEC_CODE, 2)
-                validateBarcode(this, "Test Data Matrix", DATA_MATRIX, 2)
-                validateBarcode(this, "Test MaxiCode", MAXI_CODE, 2)
+                validateBarcode("ABCDEF", PDF417, 2)
+                validateBarcode("Test Aztec", AZTEC_CODE, 2)
+                validateBarcode("Test Data Matrix", DATA_MATRIX, 2)
+                validateBarcode("Test MaxiCode", MAXI_CODE, 2)
             }
         }
     }

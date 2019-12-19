@@ -11,11 +11,11 @@ import pl.beone.promena.transformer.contract.model.Metadata
 internal object MetadataCreator {
 
     fun createMetadata(listOfPageWithItem: List<PageWithItem<DetectedBarcode>>): Metadata =
-        BarcodeDetectorMetadataBuilder(
+        BarcodeDetectorMetadataBuilder().apply {
             listOfPageWithItem.map { (page, detectedBarcode) ->
-                createBarcode(detectedBarcode, page)
+                barcode(createBarcode(detectedBarcode, page))
             }
-        ).build()
+        }.build()
 
     private fun createBarcode(detectedBarcode: DetectedBarcode, page: Int): Metadata =
         BarcodeBuilder()
