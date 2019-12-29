@@ -6,6 +6,8 @@
 **/test/**/*.png
 **/test/**/*.jpg
 **/evaluator/image/**/*
+**/*sensitive*
+**/*Sensitive*
 
 # Created by https://www.gitignore.io/api/eclipse,intellij,kotlin,java
 # Edit at https://www.gitignore.io/?templates=eclipse,intellij,kotlin,java
