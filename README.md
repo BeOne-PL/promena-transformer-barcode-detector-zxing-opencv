@@ -1,7 +1,7 @@
 # Promena Transformer - `barcode detector - ZXing & OpenCV`
 This transformer provides functionality to detect barcodes in a `application/pdf` document using ZXing 3.4.0 and OpenCV 4.1.2.
 
-Visit [Promena#Transformers](https://gitlab.office.beone.pl/promena/promena#transformers) to understand the repository structure.
+Visit [Promena#Transformer](https://gitlab.office.beone.pl/promena/promena#transformer) to understand the repository structure.
 
 The solution was developed thanks to the following resources:
 * https://www.pyimagesearch.com/2014/11/24/detecting-barcodes-images-python-opencv/
