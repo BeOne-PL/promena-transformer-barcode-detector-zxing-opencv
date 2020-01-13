@@ -107,4 +107,4 @@ transformer.pl.beone.promena.transformer.barcodedetector.zxingopencv.default.par
 ## Evaluator
 If you want to adjust parameters, run [`Main`](./evaluator/src/main/kotlin/pl/beone/promena/transformer/barcodedetector/zxingopencv/evaluator/Main.kt) from [`barcode-detector-zxing-opencv-evaluator`](./evaluator) module (you have to install OpenCV 4.1.2 on your computer).
 
-![Screen](./doc/evaluator-screen.png)
+![Screen](./README-evaluator-screen.png)
