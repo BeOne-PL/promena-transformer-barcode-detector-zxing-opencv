@@ -1,7 +1,7 @@
 # Promena Transformer - `barcode detector - ZXing & OpenCV`
 This transformer provides functionality to detect barcodes in a `application/pdf` document using ZXing 3.4.0 and OpenCV 4.1.2.
 
-Visit [Promena#Transformer](https://gitlab.office.beone.pl/promena/promena#transformer) to understand the repository structure.
+Visit [Promena#Transformer](https://github.com/BeOne-PL/promena#transformer) to understand the repository structure.
 
 The solution was developed thanks to the following resources:
 * https://www.pyimagesearch.com/2014/11/24/detecting-barcodes-images-python-opencv/
@@ -25,7 +25,7 @@ The solution was developed thanks to the following resources:
 15. Filter found barcodes using value from `regexFilter` parameter
 
 ## Transformation [`ZxingOpenCvBarcodeDetectorDsl`](./application-model/src/main/kotlin/pl/beone/promena/transformer/barcodedetector/zxingopencv/applicationmodel/ZxingOpenCvBarcodeDetectorDsl.kt), [`ZxingOpenCvBarcodeDetectorParametersDsl`](./application-model/src/main/kotlin/pl/beone/promena/transformer/barcodedetector/zxingopencv/applicationmodel/ZxingOpenCvBarcodeDetectorParametersDsl.kt)
-The [`DataDescriptor`](https://gitlab.office.beone.pl/promena/promena/blob/master/base/promena-transformer/contract/src/main/kotlin/pl/beone/promena/transformer/contract/data/DataDescriptor.kt) has to contain at least one descriptor. If more than one descriptor is passed, the transformation will be performed on each of them separately.
+The [`DataDescriptor`](https://github.com/BeOne-PL/promena/blob/master/base/promena-transformer/contract/src/main/kotlin/pl/beone/promena/transformer/contract/data/DataDescriptor.kt) has to contain at least one descriptor. If more than one descriptor is passed, the transformation will be performed on each of them separately.
 
 ## Support [`ZxingOpenCvBarcodeDetectorSupport`](./application-model/src/main/kotlin/pl/beone/promena/transformer/barcodedetector/zxingopencv/applicationmodel/ZxingOpenCvBarcodeDetectorSupport.kt)
 ### Media type [`ZxingOpenCvBarcodeDetectorSupport.MediaTypeSupport`](./application-model/src/main/kotlin/pl/beone/promena/transformer/barcodedetector/zxingopencv/applicationmodel/ZxingOpenCvBarcodeDetectorSupport.kt)
@@ -52,7 +52,7 @@ Take a look at [Algorithm (for one page)](#algorithm-for-one-page) to understand
 * `matrixErosionsIterations`, `Int`, *`<1, 1000>`*, optional
 * `matrixDilationsIterations`, `Int`, *`<1, 1000>`*, optional
 
-## [Metadata](https://gitlab.office.beone.pl/promena/promena-transformer-barcode-detector-metadata)
+## [Metadata](https://github.com/BeOne-PL/promena-transformer-barcode-detector-metadata)
 Visit to find out how to build and process barcode metadata. 
 
 ## Dependency
