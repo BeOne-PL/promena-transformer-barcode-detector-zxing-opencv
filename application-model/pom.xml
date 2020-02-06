@@ -13,7 +13,7 @@
 
     <groupId>pl.beone.promena.transformer</groupId>
     <artifactId>barcode-detector-zxing-opencv-application-model</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 
     <properties>
         <barcode-detector-metadata.version>1.0.0</barcode-detector-metadata.version>

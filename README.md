@@ -60,7 +60,7 @@ Visit to find out how to build and process barcode metadata.
 <dependency>
     <groupId>pl.beone.promena.transformer</groupId>
     <artifactId>barcode-detector-zxing-opencv-configuration</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
@@ -69,7 +69,7 @@ Visit to find out how to build and process barcode metadata.
 <dependency>
     <groupId>pl.beone.promena.transformer</groupId>
     <artifactId>barcode-detector-zxing-opencv</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 

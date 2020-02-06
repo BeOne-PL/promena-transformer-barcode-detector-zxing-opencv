@@ -9,7 +9,7 @@ class ZxingOpenCvBarcodeDetectorDslTest {
 
     @Test
     fun zxingOpenCvBarcodeDetectorTransformation() {
-        with(zxingOpenCvBarcodeDetectorTransformation(zxingOpenCvBarcodeDetectorParameters())) {
+        with(zxingOpenCvBarcodeDetectorTransformation(APPLICATION_PDF, zxingOpenCvBarcodeDetectorParameters())) {
             transformerId shouldBe TRANSFORMER_ID
             targetMediaType shouldBe APPLICATION_PDF
             parameters.getAll().size shouldBe 0

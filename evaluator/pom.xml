@@ -6,7 +6,7 @@
 
     <groupId>pl.beone.promena.transformer</groupId>
     <artifactId>barcode-detector-zxing-opencv-evaluator</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 
     <name>pl.beone.promena.transformer:barcode-detector-zxing-opencv-evaluator</name>
 
@@ -16,7 +16,7 @@
         <kotlin.version>1.3.50</kotlin.version>
         <java.version>11</java.version>
 
-        <barcode-detector-zxing-opencv.version>1.0.0</barcode-detector-zxing-opencv.version>
+        <barcode-detector-zxing-opencv.version>1.0.1</barcode-detector-zxing-opencv.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
